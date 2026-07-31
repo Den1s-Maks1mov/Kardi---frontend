@@ -1,0 +1,52 @@
+<header class="header" [class.header--scrolled]="isScrolled" [class.header--history]="isHistoryRoute">
+  <a routerLink="/" class="logo">
+    <img src="/assets/kardi-logo.svg" alt="Kardi Logo" class="logo__img logo__img--desktop">
+    <img src="/assets/logo-circle.svg" alt="Kardi Logo" class="logo__img logo__img--mobile">
+  </a>
+
+  <nav class="nav">
+    <ul class="nav__list">
+      <li class="nav__item"><a routerLink="/" fragment="scroll_how-it-works" class="nav__link">Як це працює</a></li>
+      <li class="nav__item"><a routerLink="/history" class="nav__link" routerLinkActive="nav__link--active">Історія вимірювань</a></li>
+    </ul>
+  </nav>
+
+  <div class="actions">
+
+    <button class="btn btn-history-mobile" routerLink="/history" routerLinkActive="btn-history-mobile--active">
+      <img src="/assets/history-circle.svg" aria-hidden="true" alt="">
+    </button>
+
+    <button class="btn btn-measurement" (click)="onStartMeasurementClick($event)">
+      <span class="btn-text">Почати вимірювання</span>
+      <img src="/assets/btn-wave.svg" aria-hidden="true" alt="">
+    </button>
+
+    <ng-container *ngIf="authService.isLoggedIn(); else guestTemplate">
+      <div class="profile-wrapper">
+        <button
+          class="btn btn-login user-btn"
+          [class.user-btn--active]="isProfileMenuOpen"
+          (click)="toggleProfileMenu()"
+        >
+          <img src="/assets/lucide_user.svg" aria-hidden="true" alt="" class="user-icon">
+          <span class="btn-text user-btn__name">{{ authService.currentLogin || 'Профіль' }}</span>
+        </button>
+
+        <div class="profile-dropdown" *ngIf="isProfileMenuOpen">
+          <button class="btn btn-logout" (click)="onLogout()">
+            <img src="/assets/lucide-exit.svg" aria-hidden="true" alt="" class="logout-icon">
+            <span class="btn-text">Вийти</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #guestTemplate>
+      <button class="btn btn-login" routerLink="/login">
+        <img src="/assets/lucide_user.svg" aria-hidden="true" alt="">
+        <span class="btn-text">Увійти</span>
+      </button>
+    </ng-template>
+  </div>
+</header>

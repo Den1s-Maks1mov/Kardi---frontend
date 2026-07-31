@@ -1,0 +1,90 @@
+<div class="home-page">
+
+  <section class="hero container reveal-section" appReveal>
+    <div class="hero__content">
+      <h1 class="hero__title">Вимірюйте життєві показники онлайн, тут і зараз</h1>
+      <p class="hero__text">
+        Пройдіть швидкий 30-секундний тест за допомогою вашої камери.
+        Отримайте миттєвий аналіз серцебиття, дихання та артеріального тиску абсолютно безкоштовно.
+      </p>
+      <button class="btn btn-measurement" routerLink="/measurement">
+        Почати вимірювання
+        <img src="/assets/btn-wave.svg" class="btn__icon" aria-hidden="true" alt="">
+      </button>
+    </div>
+
+    <div class="hero__visual">
+      <img src="/assets/hero-girl.png" alt="Демонстрація вимірювання" class="hero__img">
+    </div>
+  </section>
+
+  <section id="how-it-works" class="how-it-works container reveal-section" appReveal>
+    <div  class="how-it-works__visual">
+      <img src="/assets/laptop-demo.png" alt="" class="laptop-img">
+    </div>
+
+    <div id="scroll_how-it-works" class="how-it-works__content">
+      <h2 class="section-title">Як це працює?</h2>
+      <p  class="section-subtitle">Ваше обличчя розповість усе</p>
+
+      <div   class="steps">
+        <div  class="step-card">
+          <img src="/assets/step-camera.svg" class="step-card__icon" aria-hidden="true" alt="">
+          <h3 class="step-card__title">1. Наведіть камеру</h3>
+          <p class="step-card__text">Відкрийте сайт на смартфоні або ноутбуці та надайте доступ до камери. Знайдіть добре освітлене місце.</p>
+        </div>
+
+        <div  class="step-card">
+          <img src="/assets/step-relax.svg" class="step-card__icon" aria-hidden="true" alt="">
+          <h3 class="step-card__title">2. Розслабтеся на 30 секунд</h3>
+          <p class="step-card__text">Просто дивіться в об'єктив, дихайте рівно і намагайтеся не рухатись. Штучний інтелект зробить усе інше.</p>
+        </div>
+
+        <div class="step-card">
+          <img src="/assets/step-report.svg" class="step-card__icon" aria-hidden="true" alt="">
+          <h3 class="step-card__title">3. Отримайте звіт</h3>
+          <p class="step-card__text">Миттєво переглядайте свої показники на екрані та слідкуйте за станом організму.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="metrics container reveal-section" appReveal>
+    <div class="metrics__header">
+      <h2 class="section-title">Що саме ми вимірюємо?</h2>
+      <p class="section-subtitle">Повний чекап вашого стану за хвилину</p>
+    </div>
+
+    <div class="metrics__cards">
+      <img src="/assets/metrics-wave.svg" class="metrics__wave" aria-hidden="true" alt="">
+      <div class="metric-card">
+        <img src="/assets/metric-card-pulse.svg" class="metric-card__icon" aria-hidden="true" alt="">
+        <h3 class="metric-card__title">Частота серцевих скорочень (Пульс)</h3>
+        <p class="metric-card__text">Дізнайтеся, як б'ється ваше серце в стані спокою або після навантажень.</p>
+      </div>
+
+      <div class="metric-card">
+        <img src="/assets/metric-card-breath.svg" class="metric-card__icon" aria-hidden="true" alt="">
+        <h3 class="metric-card__title">Частота дихання</h3>
+        <p class="metric-card__text">Важливий показник для оцінки роботи легенів та загального стану.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="technology container reveal-section" appReveal>
+    <div class="technology__content">
+      <h2 class="section-title">Ваше обличчя розповість усе. Як працює наша технологія?</h2>
+      <p class="technology__text">
+        Кожного разу, коли ваше серце б'ється, воно перекачує кров по всьому тілу, включаючи дрібні судини під шкірою вашого обличчя. Ці пульсації викликають мікроскопічні зміни кольору шкіри, які абсолютно неможливо помітити людським оком.
+      </p>
+    </div>
+    <div class="technology__visual">
+      <img src="/assets/webcam.png" alt="Веб-камера" class="tech-img">
+    </div>
+  </section>
+
+  <section class="accordion container reveal-section" appReveal>
+    <app-faq-accordion></app-faq-accordion>
+  </section>
+
+</div>

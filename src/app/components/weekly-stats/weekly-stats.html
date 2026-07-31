@@ -1,0 +1,41 @@
+<div class="card weekly-card">
+  <div class="card__header">
+    <h3 class="card__title">Тижнева статистика</h3>
+    <img src="/assets/help-circle.svg" class="tooltip-icon" alt="" [appTooltip]="tooltipData['stats']">
+  </div>
+
+  <div *ngIf="isLoading" class="weekly-card__loading">
+    Розрахунок даних...
+  </div>
+
+  <div *ngIf="errorMessage" class="weekly-card__error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="weekly-card__grid" *ngIf="!isLoading && !errorMessage && stats">
+    <div class="stat-box">
+      <span class="stat-box__label">Мінімум</span>
+      <div class="stat-box__value" [style.color]="getMeta(stats.min).color">
+        {{ stats.min !== null ? stats.min : '—' }}
+      </div>
+      <span class="stat-box__unit" [style.color]="getMeta(stats.min).color">bpm</span>
+    </div>
+
+    <div class="stat-box">
+      <span class="stat-box__label">Середнє</span>
+      <div class="stat-box__value" [style.color]="getMeta(stats.avg).color">
+        {{ stats.avg !== null ? stats.avg : '—' }}
+      </div>
+      <span class="stat-box__unit" [style.color]="getMeta(stats.avg).color">bpm</span>
+    </div>
+
+    <div class="stat-box">
+      <span class="stat-box__label">Максимум</span>
+      <div class="stat-box__value" [style.color]="getMeta(stats.max).color">
+        {{ stats.max !== null ? stats.max : '—' }}
+      </div>
+      <span class="stat-box__unit" [style.color]="getMeta(stats.max).color">bpm</span>
+    </div>
+  </div>
+
+</div>

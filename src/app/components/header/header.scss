@@ -1,0 +1,350 @@
+// Приховуємо мобільні елементи на десктопі
+.logo__img--mobile {
+  display: none;
+}
+.btn-history-mobile {
+  display: none;
+}
+
+// ==========================================================================
+// 1. ГОЛОВНИЙ КОНТЕЙНЕР ХЕДЕРА
+// ==========================================================================
+
+.header {
+  // Плаваючий (sticky) хедер, який центрується і "витрачає" над сторінкою
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%); // Відцентровуємо абсолютно спозиційований елемент
+  z-index: 1000;
+
+  // Плавна анімація при скролі сторінки
+  // Вказуємо конкретні властивості, щоб 'top' застосовувався миттєво і без стрибків
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+  max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+  border-radius 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+  padding 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+  box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  // Обмеження ширини (відступи по краях)
+  width: calc(100% - 48px);
+  max-width: 100%;
+  padding: 8px 8px 8px 24px;
+
+  background: #FFFFFF;
+  border-radius: 62px; // У початковому стані хедер круглий
+  box-shadow: 0px 4px 9.2px 0px rgba(116, 139, 254, 0.21);
+  box-sizing: border-box;
+
+  @media (min-width: 1348px) { // 1300px ширини хедера + 48px бокові відступи
+    width: 1300px;
+  }
+
+  // ==========================================================================
+  // 2. СТАН ПРИ СКРОЛІ (Прилипання до верху)
+  // ==========================================================================
+  &--scrolled {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0 0 0px 0px; // Забираємо закруглення, перетворюємо на суцільну смугу
+
+    // Динамічний паддінг: розраховує відступи так, щоб контент хедера
+    // залишався на одній вертикальній лінії з контентом сайту (.container)
+    padding-left: max(24px, calc((100vw - 1200px) / 2 + 24px));
+    padding-right: max(8px, calc((100vw - 1200px) / 2 + 8px));
+
+    box-shadow: 0px 4px 15px 0px rgba(116, 139, 254, 0.12);
+  }
+}
+
+// ==========================================================================
+// 3. ЛОГОТИП
+// ==========================================================================
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  height: 100%;
+  gap: 16px;
+
+  &__img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+// ==========================================================================
+// 4. НАВІГАЦІЯ
+// ==========================================================================
+
+.nav {
+  margin-left: auto; // Відштовхуємо навігацію максимально вправо
+
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    list-style: none; // Прибираємо стандартні маркери списку
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    padding: 0;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: #252937;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+
+    // Підсвітка при наведенні та візуальне виділення активної сторінки
+    &:hover,
+    &--active {
+      color: #5673D3;
+    }
+  }
+}
+
+// ==========================================================================
+// 5. БЛОК КНОПОК ДІЙ
+// ==========================================================================
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// Специфічні стилі кнопок хедера (доповнюють глобальний .btn)
+.btn-measurement {
+  padding: 0 24px;
+  background: #5673D3;
+  border: 2px solid #5673D3;
+  color: #FFFFFF;
+  border-radius: 32px; // Хедер має сильніше закруглені кнопки (пігулки)
+}
+
+.btn-login {
+  padding: 0 24px;
+  background: #FFFFFF;
+  border: 2px solid #5673D3; // Прозора кнопка з кольоровою рамкою
+  color: #5673D3;
+  border-radius: 32px;
+}
+
+.user-btn {
+  // Базові стилі для кнопки, щоб текст не переносився на новий рядок
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+
+  &__name {
+    display: inline-block;
+    white-space: nowrap;          // Забороняємо перенос тексту
+    overflow: hidden;             // Ховаємо все, що не влазить
+    text-overflow: ellipsis;      // Додаємо ті самі "..." в кінці
+    vertical-align: middle;
+
+    // Мобільні екрани
+    @media (max-width: 768px) {
+      max-width: 5ch;
+    }
+
+    // Десктопні екрани (від 769px)
+    @media (min-width: 769px) {
+      // Даємо достатньо місця для повного імені (або можна прибрати max-width взагалі,
+      // якщо дизайн дозволяє кнопці розтягуватися)
+      max-width: 150px;
+    }
+  }
+}
+
+// ==========================================================================
+// 6. СТАН ДЛЯ СТОРІНКИ ІСТОРІЇ (Вирівнювання по ширині карток)
+// ==========================================================================
+.header--history {
+  width: 90%; // Оскільки .history-page має padding по 5% з боків (100 - 5 - 5)
+  max-width: 100%;
+
+  // Переконуємося, що медіа-запит вище не переб'є сторінку історії
+  @media (min-width: 1348px) {
+    width: 90%;
+  }
+
+  // Налаштовуємо поведінку для прилиплого (scrolled) стану саме на цій сторінці
+  &.header--scrolled {
+    width: 100%; // Прилиплий хедер знову стає на всю ширину
+    padding-left: 5%; // Але його контент (лого та кнопки) вирівнюється по лініях карток
+    padding-right: 5%;
+  }
+}
+
+// ==========================================================================
+// 7. АДАПТИВНІСТЬ (Планшети та мобільні)
+// ==========================================================================
+
+@media (max-width: 768px) {
+  // 1. Заміна логотипа
+  .logo__img--desktop {
+    display: none;
+  }
+  .logo__img--mobile {
+    display: block;
+    height: 44px; // Розмір адаптовано під круглі кнопки
+    width: auto;
+  }
+
+  // 2. Повністю ховаємо текстову навігацію
+  .nav {
+    display: none;
+  }
+
+  // 3. Відступи між кнопками дій
+  .actions {
+    margin-left: auto;
+    gap: 12px;
+  }
+
+  // 4. Мобільна кнопка Історії (Сіра рамка)
+  .btn-history-mobile {
+    display: flex;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #8B91A4;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease;
+
+    &--active {
+      border-color: #5673D3; // Підсвітка синім, якщо ми на сторінці історії
+    }
+  }
+
+  // 5. Кнопка вимірювання (робимо круглою, ховаємо текст)
+  .btn-measurement {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+
+    .btn-text {
+      display: none;
+    }
+  }
+
+  // 6. Кнопка авторизації (Гостьова та Авторизована)
+  .btn-login {
+    height: 48px;
+
+    // Якщо це гостьова кнопка (без класу .user-btn)
+    &:not(.user-btn) {
+      width: 48px;
+      padding: 0;
+      border-radius: 50%;
+      justify-content: center;
+
+      .btn-text {
+        display: none;
+      }
+    }
+  }
+
+  // Для авторизованого користувача зберігаємо форму пігулки
+  .user-btn {
+    padding: 0 16px;
+    border-radius: 32px; // Форма "пігулки", а не кола
+    gap: 8px;
+
+    // Гарантуємо, що нікнейм видно (його обмеження в 5ch вже прописане у вас в SCSS)
+    .user-btn__name {
+      display: inline-block;
+    }
+  }
+}
+
+
+// ==========================================================================
+// ВИПАДАЮЧЕ МЕНЮ ПРОФІЛЮ ТА КНОПКА ВИХОДУ
+// ==========================================================================
+
+.profile-wrapper {
+  position: relative; // Контейнер для абсолютного позиціювання меню
+}
+
+.user-btn {
+  transition: all 0.3s ease;
+
+  .user-icon {
+    transition: all 0.3s ease;
+  }
+
+  // Активний стан (коли меню відкрите)
+  &--active {
+    background: #5673D3;
+    color: #FFFFFF;
+
+    .user-icon {
+      // Робить чорну/кольорову SVG іконку повністю білою
+      filter: brightness(0) invert(1);
+    }
+  }
+}
+
+// Контейнер випадаючого меню з легкою анімацією
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px); // Відступ вниз від основної кнопки
+  right: 0; // Вирівнювання по правому краю
+  z-index: 1010;
+
+  // Анімація появи
+  animation: slideFadeIn 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Дизайн кнопки "Вийти"
+.btn-logout {
+  padding: 0 24px;
+  background: #FFF5F5; // Злегка червоний (ближче до білого)
+  border: 2px solid #EF383C; // Червона рамка
+  color: #EF383C; // Червоний текст
+  border-radius: 32px;
+  min-width: 140px; // Щоб кнопка не була занадто маленькою
+  box-shadow: 0px 4px 15px 0px rgba(239, 56, 60, 0.12);
+  transition: all 0.3s ease;
+
+  // Насиченіший червоний фон при наведенні
+  &:hover {
+    background: #FFEBEB;
+  }
+
+  .logout-icon {
+    filter: invert(34%) sepia(74%) saturate(3015%) hue-rotate(338deg) brightness(101%) contrast(92%);
+  }
+}

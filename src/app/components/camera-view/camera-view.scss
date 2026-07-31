@@ -1,0 +1,169 @@
+// ==========================================================================
+// 1. ГОЛОВНІ КОНТЕЙНЕРИ ВІДЕО ТА КАМЕРИ
+// ==========================================================================
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3; // Пропорція камери
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Динамічна зміна кольору рамки, коли ші фіксує порушення
+  &.has-error {
+    .focus-frame {
+      color: #EF383C; // Глобальний колір помилки (Danger)
+    }
+  }
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+// Сам елемент <video>, з якого зчитується зображення
+.camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); // Дзеркальне відображення для природного вигляду
+}
+
+
+// ==========================================================================
+// 2. РАМКА ФОКУСУВАННЯ ОБЛИЧЧЯ (КУТИКИ)
+// ==========================================================================
+
+.focus-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;  // Обмежує ширину області фокусування
+  height: 50%; // Обмежує висоту області фокусування
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none; // Дозволяє клікати "крізь" рамку
+  color: #FFFFFF;       // Базовий колір рамки у спокійному стані
+  transition: color 0.3s ease; // Плавна зміна кольору при помилці
+
+  .corner {
+    position: absolute;
+    width: 48px;  // Розмір одного SVG-кутика
+    height: 48px;
+    overflow: visible;
+  }
+
+  // Розставляємо 4 кутики по відповідних позиціях
+  .top-left { top: 0; left: 0; }
+  .top-right { top: 0; right: 0; }
+  .bottom-left { bottom: 0; left: 0; }
+  .bottom-right { bottom: 0; right: 0; }
+}
+
+
+// ==========================================================================
+// 3. БЕЙДЖІ-ПІДКАЗКИ ДЛЯ ШІ (Анімовані сповіщення)
+// ==========================================================================
+
+.status-badge {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #FFF;
+  z-index: 3;
+  white-space: nowrap; // Забороняємо перенесення тексту на новий рядок
+
+  img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+
+  // Стандартна підказка ("Дивіться прямо")
+  &.info {
+    background: rgba(15, 23, 42, 0.85); // Темно-синій напівпрозорий фон
+  }
+
+  // Підказка про порушення ("Тримайте обличчя по центру" тощо)
+  &.warning {
+    background: #EF383C;
+    box-shadow: 0 4px 12px rgba(239, 56, 60, 0.3); // М'яка червона тінь
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); // Ефект "вистрибування"
+  }
+}
+
+// Анімація появи бейджа
+@keyframes popIn {
+  0% { opacity: 0; transform: translate(-50%, 10px) scale(0.9); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+
+// ==========================================================================
+// 4. ЕКРАН КРИТИЧНОЇ ПОМИЛКИ (Коли запис повністю перервано)
+// ==========================================================================
+
+.failure-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.9); // Глибокий темний фон перекриття
+  backdrop-filter: blur(4px);        // Розмиваємо відео позаду
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  text-align: center;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+
+  .icon-circle {
+    width: 64px;
+    height: 64px;
+    background: rgba(239, 56, 60, 0.1); // Напівпрозорий червоний фон іконки
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Manrope', sans-serif;
+    color: #FFF;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-family: 'Inter', sans-serif;
+    color: #94A3B8;
+    font-size: 16px;
+    margin-bottom: 0;
+    max-width: 80%;
+  }
+}
+
+// Плавне згасання фону при появі екрану помилки
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

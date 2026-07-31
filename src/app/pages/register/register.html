@@ -1,0 +1,100 @@
+<div class="auth-page">
+  <div class="auth-page__bg"></div>
+
+  <a routerLink="/" class="auth-logo">
+    <img src="/assets/kardi-logo.svg" alt="Kardi Logo">
+  </a>
+
+  <div class="auth-card reveal-section" appReveal>
+    <h1 class="auth-card__title">Реєстрація</h1>
+
+    <p class="auth-card__subtitle">
+      Вже маєте аккаунт? <a routerLink="/login" class="link">Увійти</a>
+    </p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+
+      <div *ngIf="errorMessage" class="alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert-success">
+        {{ successMessage }}
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="login"
+          class="form-control"
+          placeholder="Логін"
+          [class.is-invalid]="registerForm.get('login')?.invalid && registerForm.get('login')?.touched"
+        >
+
+        <div *ngIf="registerForm.get('login')?.hasError('required') && registerForm.get('login')?.touched" class="error-text">
+          Логін є обов'язковим.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="password"
+          formControlName="password"
+          class="form-control"
+          placeholder="Пароль"
+          [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        >
+
+        <div *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched" class="error-text">
+          Пароль є обов'язковим.
+        </div>
+
+        <div *ngIf="registerForm.get('password')?.hasError('passwordStrength') && registerForm.get('password')?.touched" class="validation-hints">
+          Пароль має містити:
+          <ul class="validation-hints__list">
+            <li *ngIf="!registerForm.get('password')?.errors?.['passwordStrength']?.isLengthValid">мінімум 8 символів</li>
+            <li *ngIf="!registerForm.get('password')?.errors?.['passwordStrength']?.hasUpperCase">велику літеру (A-Z)</li>
+            <li *ngIf="!registerForm.get('password')?.errors?.['passwordStrength']?.hasLowerCase">малу літеру (a-z)</li>
+            <li *ngIf="!registerForm.get('password')?.errors?.['passwordStrength']?.hasNumeric">цифру (0-9)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          class="form-control"
+          placeholder="Повторіть пароль"
+          [class.is-invalid]="registerForm.get('confirmPassword')?.invalid && (registerForm.get('confirmPassword')?.touched || registerForm.get('confirmPassword')?.dirty)"
+        >
+
+        <div *ngIf="registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched" class="error-text">
+          Будь ласка, повторіть пароль.
+        </div>
+
+        <div *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch') && (registerForm.get('confirmPassword')?.touched || registerForm.get('confirmPassword')?.dirty)" class="error-text">
+          Паролі не співпадають.
+        </div>
+      </div>
+
+      <div class="form-checkbox">
+        <input
+          type="checkbox"
+          id="terms"
+          formControlName="termsAccepted"
+          class="checkbox-input"
+        >
+        <label for="terms" class="checkbox-label">
+          Я даю згоду на збір, обробку та аналіз моїх персональних і медичних даних згідно з
+          <a href="#" class="link" routerLink="/privacy-policy">Політикою конфіденційності</a>.
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-submit" [disabled]="registerForm.invalid || isLoading">
+        {{ isLoading ? 'Обробка...' : 'Зареєструватись' }}
+      </button>
+
+    </form>
+  </div>
+</div>

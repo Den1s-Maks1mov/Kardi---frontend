@@ -1,0 +1,100 @@
+<div class="result-screen">
+  <ng-container *ngIf="!isError">
+
+    <div class="metrics-display">
+      <div class="pulse-card" [style.borderColor]="meta.color" [style.background]="meta.bgColor">
+        <div class="pulse-card__header">
+          <div class="pulse-card__title">
+            <span class="heart-icon" [style.backgroundColor]="meta.color"></span>
+            <span [style.color]="meta.color">ПУЛЬС</span>
+          </div>
+          <span class="status-tag" [ngClass]="'status-tag--' + meta.status">
+            {{ meta.badgeText }}
+          </span>
+        </div>
+        <div class="pulse-card__value" [style.color]="meta.color">
+          <span class="number">{{ finalBpm }}</span>
+          <span class="unit">bpm</span>
+        </div>
+        <div class="pulse-card__footer" [style.color]="meta.color">
+          {{ measurementDate | date:'HH:mm, dd.MM.yyyy' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="status-banner" [ngClass]="'status-banner--' + meta.status">
+      <div class="status-banner__icon">
+        <img [src]="meta.icon" alt="Status" />
+      </div>
+      <div class="status-banner__text">
+        <h4 [style.color]="meta.color">{{ statusTitleText }}</h4>
+
+        <p *ngIf="meta.status === 'low'">
+          Показники нижче здорового діапазону. <b>Пульс {{ finalBpm }} bpm</b> може свідчити про брадикардію. Якщо ви не є професійним спортсменом у стані глибокого спокою, рекомендується проконсультуватися з лікарем.
+        </p>
+        <p *ngIf="meta.status === 'normal'">
+          Показники в межах здорового діапазону. <b>Пульс {{ finalBpm }} bpm</b> - типові показники у стані спокою. Результат можна передати лікарю для запису в картку.
+        </p>
+        <p *ngIf="meta.status === 'warning'">
+          Показники дещо перевищують норму. <b>Пульс {{ finalBpm }} bpm</b> - підвищені значення для стану спокою. Це може бути наслідком недавньої фізичної активності, хвилювання або втоми. Рекомендуємо трохи відпочити та повторити вимірювання згодом.
+        </p>
+        <p *ngIf="meta.status === 'danger'">
+          Показники значно виходять за межі здорового діапазону. <b>Пульс {{ finalBpm }} bpm</b> є нетиповими для стану спокою і потребують уваги. Якщо ви не виконували фізичних вправ, відчуваєте дискомфорт або задишку, обов'язково проконсультуйтеся з лікарем.
+        </p>
+      </div>
+    </div>
+
+    <div class="scale-container">
+      <div class="scale-pointer" [style.left]="markerPosition">
+        <div class="arrow-down" [style.borderTopColor]="meta.color"></div>
+      </div>
+      <div class="scale-bars">
+        <div class="bar bar--low"></div>
+        <div class="bar bar--normal"></div>
+        <div class="bar bar--warning"></div>
+        <div class="bar bar--danger"></div>
+      </div>
+
+      <div class="scale-labels">
+        <span class="label-node node-40">40</span>
+        <span class="label-node node-60">60</span>
+        <span class="label-node node-100">100</span>
+        <span class="label-node node-130">130</span>
+        <span class="label-node node-140">140+</span>
+      </div>
+    </div>
+
+    <div class="legend-row">
+      <div class="legend-item"><span class="box box--low"></span>Низький</div>
+      <div class="legend-item"><span class="box box--normal"></span>Норма</div>
+      <div class="legend-item"><span class="box box--warning"></span>Межа</div>
+      <div class="legend-item"><span class="box box--danger"></span>Відхилення</div>
+    </div>
+  </ng-container>
+
+  <div class="error-display" *ngIf="isError">
+    <div class="error-card">
+      <div class="error-icon-wrapper">
+        <img src="/assets/error-alert.svg" alt="" aria-hidden="true">
+      </div>
+      <h3>Сталася помилка</h3>
+      <p>На жаль, нам не вдалося отримати чіткі показники. Будь ласка, перевірте освітлення, не рухайтесь та повторіть спробу вимірювання.</p>
+    </div>
+  </div>
+
+  <div class="actions-footer">
+    <button class="action-btn btn-back" routerLink="/" (click)="onHome.emit()">
+      <img src="/assets/slider-back.svg" alt=""/>
+      На головну
+    </button>
+    <button class="action-btn btn-retry" (click)="onRetry.emit()">
+      Виміряти ще раз
+      <img src="/assets/btn-wave-blue.svg" alt=""/>
+    </button>
+    <button class="action-btn btn-save" *ngIf="!isError" (click)="onSave.emit()">
+      <img src="/assets/download.svg" alt=""/>
+      Зберегти дані
+    </button>
+  </div>
+
+</div>

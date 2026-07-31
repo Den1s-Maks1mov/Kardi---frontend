@@ -1,0 +1,8 @@
+<div class="tooltip-card">
+  <div class="tooltip-card__title" *ngIf="title">{{ title }}</div>
+  <div class="tooltip-card__content">
+    <p *ngFor="let paragraph of paragraphs">{{ paragraph }}</p>
+
+    <strong *ngIf="alertText" class="text-danger-bold">{{ alertText }}</strong>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="slider-container">
+
+  <div class="slider-header">
+    <h3>Вимоги до відео</h3>
+    <p>Переконайтеся, що всі вимоги виконані для кращого результату</p>
+  </div>
+
+  <div class="slide-content">
+    <div class="slide-icon">
+      <img [src]="slides[currentSlide].icon" [alt]="slides[currentSlide].title">
+    </div>
+    <h4 class="slide-title">{{ slides[currentSlide].title }}</h4>
+    <p class="slide-desc">{{ slides[currentSlide].desc }}</p>
+  </div>
+
+  <div class="slider-pagination">
+    <span *ngFor="let dot of slides; let i = index"
+          class="dash"
+          [class.active]="i === currentSlide">
+    </span>
+  </div>
+
+  <div class="slider-actions">
+    <button class="btn btn-secondary"
+            [style.visibility]="currentSlide === 0 ? 'hidden' : 'visible'"
+            (click)="prevSlide()">
+      <img src="/assets/slider-back.svg" alt="" class="back-icon">
+      Назад
+    </button>
+
+    <button class="btn btn-primary" (click)="nextSlide()">
+      {{ currentSlide === slides.length - 1 ? 'Почати вимірювання' : 'Далі' }}
+    </button>
+  </div>
+
+</div>

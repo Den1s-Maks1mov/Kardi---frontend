@@ -1,0 +1,112 @@
+// ==========================================================================
+// 1. СПЕЦИФІЧНІ СТИЛІ КАРТКИ "ТИЖНЕВА СТАТИСТИКА" (Component-Specific Overrides)
+// ==========================================================================
+
+// Перевизначення відступів для хедера картки (Локальна мутація глобального базового класу .card)
+.card__header {
+  margin-bottom: 24px;
+}
+
+// Типографічний токен заголовка картки
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8B91A4;
+  margin: 0;
+  line-height: 100%;
+}
+
+// Інтерактивний елемент підказки (a11y/UX)
+.tooltip-icon {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s; // Мікроанімація для покращення візуального фідбеку при наведенні
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Транзакційні стани UI (Asynchronous View States) для екранів завантаження
+.weekly-card__loading {
+  padding: 24px 0;
+  text-align: center;
+  color: #8B91A4;
+  font-weight: 600;
+}
+
+// Транзакційні стани UI для екранів помилки
+.weekly-card__error {
+  padding: 24px 0;
+  text-align: center;
+  color: #EF383C; // Використання кольору семантичної помилки (Danger Token)
+  font-weight: 600;
+}
+
+// ==========================================================================
+// 2. СІТКА ДЛЯ БЛОКІВ СТАТИСТИКИ (CSS Grid Layout)
+// ==========================================================================
+
+.weekly-card__grid {
+  display: grid;
+  // Декларативний розподіл простору на 3 рівні фракційні колонки (1fr) для Мінімуму, Середнього та Максимуму
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  // Адаптивний рефлоу (Responsive Reflow) для екстремально вузьких Viewport-ів (наприклад, старі смартфони)
+  @media (max-width: 400px) {
+    grid-template-columns: 1fr; // Згортання у єдину вертикальну колонку
+  }
+}
+
+// ==========================================================================
+// 3. ОКРЕМИЙ БЛОК ПОКАЗНИКА (Metric Box / Flex Container)
+// ==========================================================================
+
+.stat-box {
+  border: 1px solid #C9CFE2;
+  border-radius: 16px;
+  padding: 16px;
+
+  // Внутрішня Flex-архітектура для управління контентом
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; // Притискаємо контент до лівого краю (Cross-axis alignment)
+  gap: 8px;
+
+  transition: border-color 0.3s;
+
+  // Лейбл показника (Label Token)
+  &__label {
+    color: #63697C;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 100%;
+  }
+
+  // Основне числове значення (Metric Value)
+  &__value {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 4px 0;
+    line-height: 100%;
+
+    // Плавна зміна кольору (Color Transition) при реактивному оновленні даних (наприклад, зміна PulseMeta з TS)
+    transition: color 0.3s ease;
+
+    // Оптимізація типографіки (Fluid Typography scaling) на планшетах/невеликих ноутбуках,
+    // щоб уникнути переповнення контейнера (Overflow prevention) масивними цифрами
+    @media (max-width: 1200px) {
+      font-size: 40px;
+    }
+  }
+
+  // Одиниця виміру (Unit Token)
+  &__unit {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+    transition: color 0.3s ease;
+  }
+}

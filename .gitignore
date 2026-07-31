@@ -1,0 +1,94 @@
+# ==============================================================================
+# GLOBAL & IDE RULES (Загальні правила для системи та редакторів)
+# ==============================================================================
+Thumbs.db
+
+# Редактори (JetBrains, VS Code, Sublime)
+.history/
+
+# Специфічні файли проектів
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+
+# ==============================================================================
+# BACKEND RULES (FastAPI / Python)
+# ==============================================================================
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+
+# Database files
+*.db
+*.sqlite3
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Logs and runtime files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+pyrightconfig.json
+
+# FastAPI / Uvicorn
+*.pid
+
+# Package metadata
+*.egg-info/
+*.eggs/
+
+# Misc
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Ignore the CLAUDE file if accidentally generated or unrelated
+CLAUDE.md
+tasks.md
+
+# ==============================================================================
+# FRONTEND RULES (Angular / Node.js)
+# ==============================================================================
+# Залежності та кеш Angular
+node_modules/
+.angular/
+.sass-cache/
+
+# Результати збірки (Compiled output)
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# Логи Angular
+npm-debug.log
+yarn-error.log
+testem.log
+libpeerconnection.log
+
+# Інші файли фронтенду
+connect.lock
+coverage/
+typings/
+__screenshots__/
+
+/dist
+/tmp
+/out-tsc
+/node_modules

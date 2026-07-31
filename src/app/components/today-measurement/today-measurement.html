@@ -1,0 +1,80 @@
+<div class="card today-card">
+  <div class="card__header">
+    <h3 class="card__title">Сьогодні</h3>
+    <span class="today-card__time">
+      <ng-container *ngIf="isLoading">...</ng-container>
+      <ng-container *ngIf="!isLoading">{{ hasData && data ? data.time : '--:--' }}</ng-container>
+    </span>
+  </div>
+
+  <div class="today-card__main" [class.is-empty]="!hasData">
+    <div class="heartbeat-bg" [style.backgroundColor]="hasData ? meta.color : null"></div>
+
+    <div class="today-card__value">
+      <ng-container *ngIf="isLoading; else dataBlock">
+        <span class="number empty-text">...</span>
+        <span class="unit empty-text">bpm</span>
+      </ng-container>
+      <ng-template #dataBlock>
+        <ng-container *ngIf="hasData && data; else emptyValue">
+          <span class="number" [style.color]="meta.color">{{ data.bpm }}</span>
+          <span class="unit" [style.color]="meta.color">bpm</span>
+        </ng-container>
+        <ng-template #emptyValue>
+          <span class="number empty-text">—</span>
+          <span class="unit empty-text">bpm</span>
+        </ng-template>
+      </ng-template>
+    </div>
+
+    <div class="status-badge"
+         [class.status-badge--empty]="!hasData"
+         [style.backgroundColor]="hasData ? meta.bgColor : null"
+         [style.color]="hasData ? meta.color : null">
+
+      <ng-container *ngIf="hasData; else emptyBadge">
+        {{ meta.badgeText }}
+        <img [src]="meta.icon" alt="" aria-hidden="true" [appTooltip]="currentTooltip">
+      </ng-container>
+
+      <ng-template #emptyBadge>
+        Сьогодні замірів не було
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="scale" [class.scale--disabled]="!hasData">
+    <div class="scale__marker"
+         *ngIf="hasData"
+         [style.left]="markerPosition"
+         [style.backgroundColor]="meta.color">
+    </div>
+    <div class="scale__bars">
+      <div class="bar bar--low"></div>
+      <div class="bar bar--normal"></div>
+      <div class="bar bar--warning"></div>
+      <div class="bar bar--danger"></div>
+    </div>
+    <div class="scale__labels">
+      <span class="label-40">40</span>
+      <span class="label-60">60</span>
+      <span class="label-100">100</span>
+      <span class="label-130">130</span>
+      <span class="label-140">140+</span>
+    </div>
+  </div>
+
+  <div class="legend" [class.legend--disabled]="!hasData">
+    <div class="legend__item"><span class="dot dot--low"></span>Низький</div>
+    <div class="legend__item"><span class="dot dot--normal"></span>Норма</div>
+    <div class="legend__item"><span class="dot dot--warning"></span>Межа</div>
+    <div class="legend__item"><span class="dot dot--danger"></span>Відхилення</div>
+  </div>
+
+  <img src="/assets/today-line.svg" class="card__line" alt="" aria-hidden="true">
+
+  <button class="btn btn-primary today-card__btn" routerLink="/measurement">
+    Новий замір
+    <img src="/assets/refresh.svg" class="btn__icon" alt="">
+  </button>
+</div>

@@ -1,0 +1,163 @@
+<div class="measure-page">
+  <div class="measure-page__bg"></div>
+
+  <div class="stepper reveal-section" appReveal>
+    <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Доступ</div>
+    </div>
+
+    <div class="step-line" [class.completed]="currentStep > 1"></div>
+
+    <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Вимірювання</div>
+    </div>
+
+    <div class="step-line" [class.completed]="currentStep > 2"></div>
+
+    <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Результат</div>
+    </div>
+  </div>
+
+  <div class="reveal-section" appReveal>
+
+    <div  class="measure-card reveal-section" [class.large-card]="currentStep > 1" [class.is-loading]="isLoading" appReveal>
+
+      <ng-container *ngIf="currentStep === 1">
+
+        <div class="modal-overlay" *ngIf="showDeniedModal">
+          <div class="modal-content">
+            <div class="icon-circle">
+              <img src="/assets/camera-blue.svg" alt="" />
+            </div>
+            <h2>Ви впевнені?</h2>
+            <p>
+              Для вимірювання пульсу та частоти дихання, Kardi має використовувати
+              вашу камеру, без неї ми нічого не зможемо виміряти!
+            </p>
+            <div class="modal-actions">
+              <button class="btn btn-secondary" routerLink="/">Повернутися на головну</button>
+              <button class="btn btn-primary" (click)="requestCameraAccess()">Продовжити вимірювати</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="access-step" [class.blurred]="showDeniedModal">
+          <div class="icon-circle">
+            <img src="/assets/camera-blue.svg" alt="" />
+          </div>
+          <h1 class="title">Доступ до камери</h1>
+          <p class="subtitle">
+            Для вимірювання пульсу та частоти дихання Kardi використовує камеру.
+          </p>
+
+          <div class="permission-box">
+            <div class="permission-box__header">
+              <img src="/assets/camera-outline.svg" alt="" />
+              <span>Kardi хоче використовувати камеру</span>
+            </div>
+            <p class="permission-box__text">
+              Аналіз виконується на вашому пристрої. Жодного відео не передається
+            </p>
+            <div class="permission-box__actions">
+              <button class="btn btn-light" (click)="denyAccess()">Відхилити</button>
+              <button class="btn btn-primary" (click)="requestCameraAccess()">Дозволити</button>
+            </div>
+          </div>
+
+          <div class="secure-footer">
+            <img src="/assets/lock.svg" alt="" />
+            <span>Безпечно &bull; Без хмари &bull; GDPR</span>
+          </div>
+        </div>
+      </ng-container>
+
+
+      <ng-container *ngIf="currentStep === 2">
+
+        <div class="loading-step animated-step" *ngIf="isLoading">
+          <div class="heart-pulse-container">
+
+            <img src="/assets/animation-circle.svg" alt="Loading circle" class="loading-circle" />
+
+            <img src="/assets/animation-heart.svg" alt="Loading heart" class="loading-heart" />
+
+          </div>
+
+          <h2 style="font-size: 32px; color: #0F172A; margin-bottom: 8px;">Завантаження</h2>
+          <p style="font-size: 18px; color: #64748B;">Зачекайте...</p>
+        </div>
+
+        <div class="measurement-layout animated-step" *ngIf="!isLoading">
+
+          <div class="camera-col">
+            <app-camera-view
+              #cameraApp
+              (onPermissionDenied)="onCameraPermissionDenied()"
+              (timeTick)="updateTimer($event)"
+              (warningState)="onWarningStateChange($event)" (onCriticalFailure)="onCriticalFailure($event)"
+              (onFinished)="onRecordingFinished($event)">
+            </app-camera-view>
+          </div>
+
+          <div class="info-col">
+
+            <div class="slider-section" *ngIf="!isRecording && !showError">
+              <app-instruction-slider (onComplete)="startMeasurement()"></app-instruction-slider>
+            </div>
+
+            <div class="recording-section" *ngIf="isRecording">
+              <div class="timer-circle" [class.error-state]="hasActiveWarning">
+                <span class="time">{{ currentTimer }}</span>
+                <span class="label">секунд</span>
+              </div>
+
+              <div class="pulse-container" [class.error-state]="hasActiveWarning">
+                <div class="pulse-wave"></div>
+                <div class="flat-line"></div>
+              </div>
+
+              <h3 class="recording-title">Не рухайтесь</h3>
+              <p class="recording-desc">Камера зчитує мікрозміни кольору шкіри</p>
+            </div>
+
+            <div class="error-section" *ngIf="showError && !isRecording">
+
+              <h2 style="font-family: 'Manrope', sans-serif; font-size: 24px; color: #0F172A; margin-bottom: 8px;">
+                Запис перервано
+              </h2>
+              <p style="font-family: 'Inter', sans-serif; font-size: 16px; color: #EF4444; margin-bottom: 16px; font-weight: 500;">
+                Не було дотримано умов, будь ласка, повторіть спробу.
+              </p>
+              <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #64748B; margin-bottom: 32px;">
+                Причина: {{ showError }}
+              </p>
+
+              <button class="btn btn-primary" (click)="resetToSlider()" style="width: 100%;">
+                Повернутися до інструкцій
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+
+      <ng-container *ngIf="currentStep === 3">
+
+        <app-result-screen
+          [finalBpm]="finalBpm"
+          (onHome)="goToHome()"
+          (onRetry)="resetProcess()"
+          (onSave)="saveData()">
+        </app-result-screen>
+
+      </ng-container>
+
+    </div>
+  </div>
+
+</div>

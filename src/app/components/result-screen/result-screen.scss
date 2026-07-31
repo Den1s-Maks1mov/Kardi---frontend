@@ -1,0 +1,473 @@
+// ==========================================================================
+// 1. ГОЛОВНИЙ КОНТЕЙНЕР РЕЗУЛЬТАТІВ
+// ==========================================================================
+
+.result-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #FFFFFF;
+  animation: fadeIn 0.5s ease-out;
+}
+
+// ==========================================================================
+// 2. КАРТКА ПОКАЗНИКА ПУЛЬСУ (Центральний елемент)
+// ==========================================================================
+
+.metrics-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+
+  .pulse-card {
+    background: #FFFFFF;
+    border: 1px solid #12613E; // Колір рамки перебивається динамічно через інлайн-стилі в TS
+    border-radius: 16px;
+    padding: 16px 32px;
+    width: 100%;
+    max-width: 360px;
+    text-align: left;
+    gap: 24px;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .pulse-card__title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+
+      .heart-icon {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+
+        // Маска дозволяє фарбувати SVG-іконку сердечка через background-color у TS
+        -webkit-mask: url('/assets/result-heart.svg') no-repeat center / contain;
+        mask: url('/assets/result-heart.svg') no-repeat center / contain;
+      }
+    }
+
+    // Міні-бейджик зі статусом в шапці картки
+    .status-tag {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 10px;
+
+      &--low { background: #5673D3; color: #EEF1FD; }
+      &--normal { background: #21BC54; color: #EAF8EE; }
+      &--warning { background: #E8A90B; color: #FFF7E3; }
+      &--danger { background: #EF383C; color: #FDECEC; }
+    }
+
+    &__value {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 6px;
+
+      .number {
+        font-size: 72px;
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .unit {
+        font-size: 20px;
+        font-weight: 600;
+        margin-left: 14px;
+      }
+    }
+
+    &__footer {
+      font-size: 20px;
+      font-weight: 400;
+      margin-top: 4px; // Легкий відступ від гігантських цифр пульсу
+    }
+  }
+}
+
+// ==========================================================================
+// 3. ІНФОРМАЦІЙНИЙ БАНЕР З ОПИСОМ (Під карткою)
+// ==========================================================================
+
+.status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 32px;
+  border-radius: 16px;
+  text-align: left;
+  margin-bottom: 40px;
+  border: 1px solid transparent;
+
+  &__icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__text {
+    h4 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+    p {
+      font-size: 20px;
+      line-height: 1.5;
+      margin: 0;
+      color: #64748B; // Стандартний колір тексту
+
+      // Стилізація тегу <b> для виділення самого значення пульсу в тексті
+      b {
+        font-weight: 700;
+        color: #0F172A;
+      }
+    }
+  }
+
+  // --- Кольорові стани банера (Фон та рамка) ---
+  &--low { background: #F8FAFC; border-color: #5673D3; }
+  &--normal { background: #F0FDF4; border-color: #21BC54; }
+  &--warning { background: #FFFBEB; border-color: #E8A90B; }
+  &--danger { background: #FEF2F2; border-color: #EF383C; }
+
+  // Перевизначення кольору тексту для "Межі" та "Відхилення" (за макетом)
+  &--warning &__text p {
+    color: #92400E;
+    b { color: #92400E; }
+  }
+  &--danger &__text p {
+    color: #991B1B;
+    b { color: #991B1B; }
+  }
+}
+
+// ==========================================================================
+// 4. ПРОГРЕСИВНА ШКАЛА З МАРКЕРОМ
+// ==========================================================================
+
+.scale-container {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 0 4px;
+
+  // Плаваючий маркер (стрілочка вниз)
+  .scale-pointer {
+    position: absolute;
+    top: -18px;
+    transform: translateX(-50%);
+    transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 5;
+
+    .arrow-down {
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 14px solid #21BC54; // Колір перебивається інлайн-стилем з TS
+    }
+  }
+
+  // Самі кольорові відрізки шкали
+  .scale-bars {
+    display: flex;
+    gap: 6px;
+    height: 15px;
+
+    .bar {
+      height: 100%;
+      border-radius: 30px;
+
+      // flex-значення відповідають пропорціям діапазонів на шкалі
+      &--low { background: #5673D3; flex: 20; }     // < 60
+      &--normal { background: #21BC54; flex: 40; }  // 60 - 100
+      &--warning { background: #E8A90B; flex: 30; } // 100 - 130
+      &--danger { background: #EF383C; flex: 10; }  // 130+
+    }
+  }
+
+  // Текстові позначки під шкалою (40, 60, 100...)
+  .scale-labels {
+    position: relative;
+    height: 24px;
+    margin-top: 10px;
+
+    .label-node {
+      position: absolute;
+      font-size: 15px;
+      font-weight: 700;
+      color: #94A3B8;
+      transform: translateX(-50%);
+
+      // Точне позиціонування під стики кольорових блоків
+      &.node-40 { left: 0%; transform: none; }
+      &.node-60 { left: 20%; }
+      &.node-100 { left: 60%; }
+      &.node-130 { left: 90%; }
+      &.node-140 { right: 0%; left: auto; transform: none; }
+    }
+  }
+}
+
+// ==========================================================================
+// 5. ЛЕГЕНДА ШКАЛИ (Кольорові квадратики знизу)
+// ==========================================================================
+
+.legend-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 48px;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #94A3B8;
+
+    .box {
+      width: 22px;
+      height: 22px;
+      border-radius: 3px;
+
+      &--low { background: #5673D3; }
+      &--normal { background: #21BC54; }
+      &--warning { background: #E8A90B; }
+      &--danger { background: #EF383C; }
+    }
+  }
+}
+
+// ==========================================================================
+// 6. ФУТЕР З КНОПКАМИ ДІЙ
+// ==========================================================================
+
+.actions-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  width: 100%;
+
+  .action-btn {
+    flex: 1; // Щоб кнопки були однакової ширини
+    height: 56px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    gap: 10px;
+
+    img { width: 24px; height: 24px; }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &.btn-back {
+      background: #E2E8F0;
+      color: #475569;
+      &:hover { background: #CBD5E1; }
+    }
+
+    &.btn-retry {
+      background: transparent;
+      border: 2px solid #5673D3; // Рамка 2px для консистенції з іншими outline-кнопками
+      color: #5673D3;
+      &:hover { background: #EEF1FD; }
+    }
+
+    &.btn-save {
+      background: #5673D3;
+      color: #FFFFFF;
+      &:hover { background: #4660B4; }
+    }
+  }
+}
+
+// ==========================================================================
+// 7. ЕКРАН КРИТИЧНОЇ ПОМИЛКИ (Відображається замість шкали)
+// ==========================================================================
+
+.error-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 400px;
+  margin-bottom: 0;
+
+  .error-card {
+    background: #FEF2F2;
+    border: 1px solid #FEE2E2;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    max-width: 420px;
+
+    .error-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #991B1B; // Темно-червоний колір заголовка
+      margin: 0 0 12px 0;
+    }
+
+    p {
+      font-size: 16px;
+      color: #7F1D1D; // Колір тексту помилки
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+}
+
+// ==========================================================================
+// 8. АНІМАЦІЇ
+// ==========================================================================
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// ==========================================================================
+// 9. АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ
+// ==========================================================================
+
+@media (max-width: 768px) {
+  // 1. Картка показника пульсу
+  .metrics-display {
+    margin-bottom: 24px;
+
+    .pulse-card {
+      padding: 16px; // Зменшуємо внутрішні відступи
+
+      &__header {
+        margin-bottom: 16px;
+      }
+
+      .pulse-card__title {
+        font-size: 16px;
+
+        .heart-icon {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      .status-tag {
+        font-size: 12px;
+      }
+
+      &__value {
+        .number {
+          font-size: 56px; // Зменшуємо величезні цифри пульсу
+        }
+        .unit {
+          font-size: 16px;
+        }
+      }
+
+      &__footer {
+        font-size: 14px;
+      }
+    }
+  }
+
+  // 2. Інформаційний банер (статус)
+  .status-banner {
+    padding: 16px;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    &__icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    &__text {
+      h4 {
+        font-size: 18px;
+      }
+      p {
+        font-size: 15px; // Робимо текст компактнішим
+      }
+    }
+  }
+
+  // 3. Шкала
+  .scale-container {
+    margin-bottom: 24px;
+
+    .scale-labels {
+      .label-node {
+        font-size: 12px; // Зменшуємо шрифти шкали
+
+        &.node-130 {
+          left: 88%;
+          transform: translateX(-100%);
+        }
+      }
+    }
+  }
+
+  // 4. Легенда (перебудова в колонку)
+  .legend-row {
+    flex-direction: column; // Ставимо елементи один під одним
+    gap: 12px;
+    align-items: flex-start; // Вирівнюємо по лівому краю
+    margin-bottom: 32px;
+
+    .legend-item {
+      font-size: 16px;
+    }
+  }
+
+  // 5. Футер з кнопками (перебудова в колонку)
+  .actions-footer {
+    flex-direction: column;
+    gap: 16px;
+
+    .action-btn {
+      width: 100%;
+      height: 56px;
+      min-height: 56px;
+      font-size: 16px;
+    }
+  }
+}

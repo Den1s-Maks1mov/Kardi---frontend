@@ -1,0 +1,81 @@
+<div class="card history-card">
+  <div class="card__header">
+
+    <div class="header-title-group">
+      <h3 class="card__title">Історія</h3>
+
+      <div class="custom-dropdown" #dropdown>
+        <button class="dropdown-trigger"
+                (click)="toggleDropdown()"
+                [class.open]="isDropdownOpen"
+                aria-haspopup="listbox"
+                [attr.aria-expanded]="isDropdownOpen">
+          {{ selectedFilter }}
+          <img src="/assets/dropdown-icon.svg" class="dropdown-arrow" alt="">
+        </button>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen" role="listbox">
+          <button class="dropdown-item"
+                  *ngFor="let option of filterOptions"
+                  (click)="selectFilter(option)"
+                  role="option"
+                  [attr.aria-selected]="option === selectedFilter">
+            {{ option }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <img src="/assets/help-circle.svg" class="tooltip-icon" alt="" [appTooltip]="tooltipData['history']">
+
+  </div>
+
+  <div class="history-table">
+    <div class="history-table__header">
+      <span>Дата</span>
+      <span>Пульс</span>
+      <span>Характеристика</span>
+    </div>
+
+    <div class="history-table__body">
+
+      <div *ngIf="isLoading" class="history-table__loading">
+        Завантаження історії...
+      </div>
+
+      <div *ngIf="!isLoading && !errorMessage && records.length === 0" class="history-table__empty">
+        Вимірювань ще не було.
+      </div>
+
+      <div *ngIf="errorMessage" class="history-table__error">
+        {{ errorMessage }}
+      </div>
+
+      <ng-container *ngIf="!isLoading && !errorMessage">
+        <div class="history-row" *ngFor="let record of records">
+          <div class="history-row__date">
+            <strong>{{ record.dayOfWeek }}</strong> {{ record.time }}
+          </div>
+          <div class="history-row__bpm" [style.color]="record.meta?.color">
+            {{ record.bpm }} bpm
+          </div>
+          <div class="history-row__status">
+            <div class="status-badge status-badge--small"
+                 [style.backgroundColor]="record.meta?.bgColor"
+                 [style.color]="record.meta?.color">
+              {{ record.meta?.badgeText }}
+              <img [src]="record.meta?.icon" alt="" [appTooltip]="tooltipData[record.meta!.status]">
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+  <button class="btn btn-primary history-card__btn"  (click)="downloadReport()" [disabled]="isExporting || records.length === 0">
+    <img src="/assets/file.svg" class="btn__icon" aria-hidden="true" alt="">
+    <span *ngIf="!isExporting">Завантажити документ</span>
+    <span *ngIf="isExporting">Створення...</span>
+    <img src="/assets/download.svg" class="btn__icon" aria-hidden="true" alt="">
+  </button>
+</div>

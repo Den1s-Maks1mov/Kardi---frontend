@@ -1,0 +1,267 @@
+// ==========================================================================
+// 1. НАЛАШТУВАННЯ КАРТКИ ІСТОРІЇ (Перевизначення глобальних стилів)
+// ==========================================================================
+
+// Тут ми лише прибираємо стандартний паддінг, щоб таблиця прилягала до країв.
+.history-card {
+  height: 100%;
+  padding: 0;
+
+  .card__header {
+    padding: 32px 32px 16px 32px; // Повертаємо відступи тільки для хедера
+  }
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px; // Додаємо невеликий відступ замість 0
+  flex-wrap: wrap; // Дозволяємо дропдауну впасти вниз на тісних екранах
+}
+
+// ==========================================================================
+// 2. КАСТОМНИЙ ВИПАДАЮЧИЙ СПИСОК (Dropdown Фільтр)
+// ==========================================================================
+
+.custom-dropdown {
+  position: relative;
+  min-width: 140px;
+}
+
+// Кнопка, що відкриває меню
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  padding: 12px 16px;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
+  color: #252937;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #C9CFE2;
+  z-index: 101;
+  margin-left: 10px;
+
+  img.dropdown-arrow {
+    transition: transform 0.3s ease-out;
+  }
+
+  // Стан відкритого меню
+  &.open {
+    background: #FFFFFF;
+    border-color: #677EE2;
+    border-bottom-color: #C9CFE2; // Нижня лінія стає сірим розділювачем
+    border-radius: 8px 8px 0 0;   // Закругляємо тільки верхні кути
+
+    img.dropdown-arrow {
+      transform: rotate(180deg); // Перевертаємо стрілочку
+    }
+  }
+}
+
+// Контейнер з елементами списку
+.dropdown-menu {
+  margin-left: 10px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #5673D3;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  min-width: 140px;
+  z-index: 100; // Меню має перекривати таблицю
+  box-shadow: 0px 4px 9.2px 0px rgba(116, 139, 254, 0.21);
+  transform-origin: top;
+  animation: dropdownSmartAnimate 300ms ease-out forwards;
+
+  // Окремий елемент-кнопка в меню
+  .dropdown-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    display: block;
+    padding: 12px 16px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #252937;
+    cursor: pointer;
+    border-bottom: 1px solid #C9CFE2;
+    transition: background 0.2s ease, outline 0.2s ease;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    // a11y: Підсвітка при навігації мишкою або клавіатурою (Tab)
+    &:hover, &:focus {
+      background: #FAFBFF;
+      outline: none;
+    }
+
+    // Чітка рамка при фокусі з клавіатури
+    &:focus-visible {
+      outline: 2px solid #5673D3;
+      outline-offset: -2px;
+    }
+  }
+}
+
+// Плавна анімація розгортання дропдауну
+@keyframes dropdownSmartAnimate {
+  from { opacity: 0; transform: scaleY(0.9); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+
+// ==========================================================================
+// 3. ІКОНКА ПІДКАЗКИ (Tooltip)
+// ==========================================================================
+
+.tooltip-icon {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+
+// ==========================================================================
+// 4. СІТКА ТАБЛИЦІ ІСТОРІЇ
+// ==========================================================================
+
+.history-table {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-x: auto;
+
+  // Шапка таблиці (Назви колонок)
+  &__header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr; // Пропорції колонок (Дата : Пульс : Характеристика)
+    padding: 0 32px 16px 32px;
+    border-bottom: 1px solid #C9CFE2;
+    color: #8B91A4;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+
+    span:nth-child(2) { text-align: center; } // Центруємо слово "Пульс"
+    span:last-child { text-align: right; }    // Притискаємо "Характеристика" до правого краю
+  }
+
+  // Тіло таблиці зі скролом
+  &__body {
+    display: flex;
+    flex-direction: column;
+    max-height: 500px; // Обмеження висоти, щоб з'явився внутрішній скрол
+    overflow-y: auto;
+
+    // Кастомний дизайн скролбару (працює у Webkit-браузерах)
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #C9CFE2; border-radius: 10px; }
+  }
+
+  // Завантаження історії
+  &__loading {
+    padding: 32px;
+    text-align: center;
+    color: #8B91A4;
+    font-weight: 600;
+  }
+
+  // Помилка завантаження
+  &__error {
+    padding: 32px;
+    text-align: center;
+    color: #EF383C;
+    font-weight: 600;
+  }
+
+  // Відсутність записів
+  &__empty {
+    padding: 32px;
+    text-align: center;
+    color: #8B91A4;
+    font-weight: 600;
+  }
+}
+
+
+// ==========================================================================
+// 5. РЯДОК ТАБЛИЦІ ТА СТАТУСИ
+// ==========================================================================
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr; // Колонки точно збігаються з шапкою
+  align-items: center;
+  padding: 16px 32px;
+  border-bottom: 1px solid #C9CFE2;
+  transition: background 0.2s;
+
+  &:hover { background: #FAFBFF; }
+  &:last-child { border-bottom: none; }
+
+  &__date {
+    color: #8B91A4;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+
+    strong {
+      color: #252937; // Робимо день тижня (Пн, Вт) темнішим за час
+    }
+  }
+
+  &__bpm {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+  }
+
+  &__status {
+    display: flex;
+    justify-content: flex-end; // Притискаємо бадж з іконкою до правого краю
+  }
+}
+
+// Візуальний бейдж статусу (фоновий та текстовий колір тепер інлайн із TS)
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  padding: 8px 16px;
+  gap: 10px;
+  font-size: 14px;
+  border-radius: 24px; // Бейдж округлений як пігулка
+
+  img {
+    height: 24px;
+    width: auto;
+  }
+}
+
+
+// ==========================================================================
+// 6. СПЕЦИФІЧНІ ВІДСТУПИ ДЛЯ КНОПОК
+// ==========================================================================
+
+.history-card__btn {
+  margin: 24px 32px 32px 32px;
+  justify-content: center;
+}

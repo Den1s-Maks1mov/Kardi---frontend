@@ -1,0 +1,252 @@
+/* ==========================================================================
+   1. ІМПОРТИ ТА ШРИФТИ
+   ========================================================================== */
+@import '@angular/cdk/overlay-prebuilt.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   2. SCSS ЗМІННІ (DESIGN TOKENS)
+   ========================================================================== */
+$font-primary: 'Manrope', sans-serif;
+$font-secondary: 'Inter', sans-serif;
+
+$color-primary: #5673D3;
+$color-primary-hover: #4660B4;
+$color-bg: #EAEDF6;
+
+$color-text-main: #252937;
+$color-text-muted: #8B91A4;
+$color-text-light: #A0A5BA;
+
+$color-success: #21BC54;
+$color-warning: #E8A90B;
+$color-danger:  #EF383C;
+
+$z-index-base: 1;
+$z-index-dropdown: 100;
+$z-index-header: 1000;
+$z-index-modal-overlay: 1050;
+
+/* ==========================================================================
+   3. БАЗОВІ СКИДАННЯ (RESETS)
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  background: $color-bg;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-anchor: none;
+
+  font-family: $font-primary;
+  color: $color-text-main;
+}
+
+/* ==========================================================================
+   4. ТИПОГРАФІКА ТА ЗАГОЛОВКИ
+   ========================================================================== */
+.section-title {
+  margin-bottom: 8px;
+  font-family: $font-primary;
+  font-weight: 750;
+  font-size: 48px;
+  line-height: 100%;
+  color: $color-primary;
+}
+
+.section-subtitle {
+  margin-bottom: 40px;
+  font-family: $font-primary;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 100%;
+  color: #4E5467;
+}
+
+/* ==========================================================================
+   5. ГЛОБАЛЬНІ UI КОМПОНЕНТИ
+   ========================================================================== */
+/* --- Контейнер --- */
+.container {
+  margin: 0 auto;
+  padding: 10% 20px 0;
+  width: 100%;
+}
+
+/* --- Картки --- */
+.card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid #C9CFE2;
+  box-shadow: 0px 8px 32px rgba(116, 139, 254, 0.08);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* --- Кнопки --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 16px;
+  font-family: $font-primary;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background-color: #C9CFE2;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &__icon {
+    height: 24px;
+    width: auto;
+  }
+}
+
+.btn-primary {
+  background: $color-primary;
+  color: #FFFFFF;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-hover;
+  }
+}
+
+.btn-secondary {
+  background: #E2E8F0;
+  color: $color-primary;
+
+  &:hover:not(:disabled) {
+    background: #D1D9E6;
+  }
+}
+
+/* --- Форми та Інпути --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-control {
+  height: 56px;
+  background: #EEF1FD;
+  border: 2px solid transparent;
+  font-family: $font-secondary;
+  font-size: 16px;
+  color: $color-text-main;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  outline: none;
+  border-radius: 8px;
+  padding: 16px;
+  width: 100%;
+
+  &::placeholder {
+    color: $color-text-light;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+    background: #FFFFFF;
+  }
+
+  &.is-invalid {
+    border-color: $color-danger;
+    background: #FFF5F5;
+  }
+}
+
+/* ==========================================================================
+   6. ГЛОБАЛЬНІ АНІМАЦІЇ (Directives)
+   ========================================================================== */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Глобальні плашки повідомлень
+.alert-error {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #FFF5F5; // Світло-червоний фон
+  border: 1px solid $color-danger; // Змінна вашого червоного кольору
+  border-radius: 8px;
+  color: $color-danger;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.alert-success {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #F0FDF4; // Світло-зелений фон
+  border: 1px solid #21BC54;
+  border-radius: 8px;
+  color: #21BC54;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+// Повідомлення під інпутами (Required або Mismatch)
+.error-text {
+  color: $color-danger;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+  padding-left: 4px;
+}
+
+// Блок розумних підказок для пароля
+.validation-hints {
+  color: $color-danger;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 10px 12px;
+  background-color: rgba($color-danger, 0.05); // Легка підложка
+  border-radius: 8px;
+
+  &__list {
+    margin: 4px 0 0 0;
+    padding-left: 20px; // Відступ для маркерів списку
+
+    li {
+      margin-bottom: 2px;
+      font-weight: 500; // Робимо список трохи менш жирним за заголовок
+    }
+  }
+}

@@ -1,0 +1,595 @@
+// ==========================================================================
+// 1. ГОЛОВНИЙ КОНТЕЙНЕР (Layout)
+// ==========================================================================
+
+.measure-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #F4F7FE; // Світліший фон для контрасту з карткою
+  padding: 140px 24px 40px;
+
+  // Декоративна хвиля на задньому фоні
+  &__bg {
+    position: absolute;
+    top: -50%; left: -30%; width: 150%; height: 150%;
+    background: url('/assets/login-wave.svg') no-repeat center center;
+    background-size: cover;
+    pointer-events: none; // Запобігає перехопленню кліків
+    z-index: 0;
+    opacity: 0.3;
+  }
+}
+
+// ==========================================================================
+// 2. ІНДИКАТОР КРОКІВ (Stepper)
+// ==========================================================================
+
+.stepper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 800px;
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2; // Піднімаємо кружки НАД з'єднувальними лініями
+    width: 100px; // Фіксована ширина для ідеальної симетрії
+
+    .step-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 2px solid #C9CFE2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: #8B91A4;
+      margin-bottom: 12px;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .step-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: #8B91A4;
+      white-space: nowrap; // Забороняє перенесення тексту кроку
+      transition: color 0.4s ease-in-out;
+    }
+
+    // Стан: ПОТОЧНИЙ активний крок
+    &.active {
+      .step-circle {
+        border-color: #5673D3;
+        color: #5673D3;
+        background: #FFFFFF;
+      }
+      .step-label { color: #5673D3; }
+    }
+
+    // Стан: ПРОЙДЕНИЙ крок
+    &.completed {
+      .step-circle {
+        background: #5673D3;
+        border-color: #5673D3;
+        color: #FFFFFF;
+      }
+      .step-label { color: #5673D3; }
+    }
+  }
+
+  // З'єднувальна лінія між кроками
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: #C9CFE2;
+    position: relative;
+    z-index: 1; // Ховаємо лінію ПІД кружки
+
+    // margin-top: 30px опускає лінію рівно на центр 60px кружка.
+    // Від'ємні бокові марджини (-20px) розтягують лінію так, щоб вона ховалася під кружком.
+    margin: 30px -20px 0 -20px;
+    transition: background-color 0.4s ease-in-out;
+
+    &.completed {
+      background: #5673D3;
+    }
+  }
+}
+
+// ==========================================================================
+// 3. АНІМАЦІЇ ТА ГОЛОВНА КАРТКА
+// ==========================================================================
+
+// Анімація плавної появи контенту (Slide In)
+@keyframes slideRightFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animated-step {
+  animation: slideRightFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity; // Апаратне прискорення (GPU) для плавності
+  width: 100%;
+  display: flex;
+  flex: 1;
+}
+
+.measure-card {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 1000px;
+  box-shadow: 0px 12px 40px rgba(116, 139, 254, 0.08);
+  border-radius: 16px;
+  border: 1px solid #C5D2FC;
+  min-height: 500px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 32px 40px;
+
+  // Плавна трансформація ширини при переході між кроками
+  transition: max-width 1s cubic-bezier(0.15, 0.15, 0.15, 0.15);
+
+  // Динамічний клас для розширення картки на 2-му етапі (камера + інструкції)
+  &.large-card {
+    max-width: 1300px;
+  }
+
+  // Стан завантаження (ховаємо фон та тінь картки)
+  &.is-loading {
+    background: transparent;
+    box-shadow: none;
+    border-color: transparent;
+  }
+}
+
+// Локальна кнопка (Глобальні .btn, .btn-primary та .btn-secondary тепер у styles.scss)
+.btn-light {
+  background: #E6E6E6;
+  color: #4E5467;
+  &:hover { background: #E2E8F0; }
+}
+
+// ==========================================================================
+// 4. КРОК 1: ДОСТУП ДО КАМЕРИ
+// ==========================================================================
+
+.access-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: filter 0.3s ease;
+  flex: 1;
+
+  &.blurred {
+    filter: blur(8px);
+    pointer-events: none;
+  }
+
+  .title {
+    font-size: 40px;
+    font-weight: 600;
+    color: #5673D3;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: #4E5467;
+    text-align: center;
+    max-width: 450px;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+  }
+}
+
+.permission-box {
+  background: #F6F5F8;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 1016px;
+  margin-bottom: 40px;
+  gap: 32px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #4E5467;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 100%;
+  }
+
+  &__text {
+    color: #64748B;
+    margin-bottom: 24px;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 16px;
+    .btn { flex: 1; }
+  }
+}
+
+.secure-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94A3B8;
+  font-weight: 500;
+  margin-top: auto;
+  font-size: 20px;
+  line-height: 100%;
+}
+
+// Модальне вікно (Попередження про відмову)
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #FFFFFF;
+  box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 500px;
+  text-align: center;
+
+  h2 { font-size: 32px; color: #5673D3; margin-bottom: 16px; }
+  p { font-size: 16px; color: #64748B; line-height: 1.5; margin-bottom: 32px; }
+
+  .modal-actions {
+    display: flex; gap: 16px;
+    .btn { flex: 1; }
+  }
+}
+
+// ==========================================================================
+// 5. КРОК 2: ПРОЦЕС ВИМІРЮВАННЯ (Лейаут)
+// ==========================================================================
+
+.measurement-layout {
+  display: flex;
+  flex: 1;
+  min-height: 500px;
+}
+
+.camera-col {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+}
+
+.info-col {
+  flex: 1;
+  padding: 0 0 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// ==========================================================================
+// 6. СТАН ЗАВАНТАЖЕННЯ (Loading Spinner)
+// ==========================================================================
+
+.loading-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  text-align: center;
+
+  .heart-pulse-container {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+
+    .loading-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+      animation: spin-bounce 4s cubic-bezier(0.25, 1.2, 0.5, 1) infinite;
+    }
+
+    .loading-heart {
+      width: 64px;
+      z-index: 2;
+      transform-origin: center center;
+      animation: heart-bounce 4s cubic-bezier(0.25, 1.2, 0.5, 1) infinite;
+    }
+  }
+}
+
+// Ключові кадри анімацій завантаження
+@keyframes spin-bounce {
+  0%, 15%   { transform: rotate(0deg); }
+  25%, 40%  { transform: rotate(90deg); }
+  50%, 65%  { transform: rotate(180deg); }
+  75%, 90%  { transform: rotate(270deg); }
+  100%      { transform: rotate(360deg); }
+}
+
+@keyframes heart-bounce {
+  0%, 15%   { transform: scale(1); }
+  20%       { transform: scale(1.15); }
+  25%, 40%  { transform: scale(1); }
+  45%       { transform: scale(1.15); }
+  50%, 65%  { transform: scale(1); }
+  70%       { transform: scale(1.15); }
+  75%, 90%  { transform: scale(1); }
+  95%       { transform: scale(1.15); }
+  100%      { transform: scale(1); }
+}
+
+// ==========================================================================
+// 7. СТАН ЗАПИСУ ВІДЕО ТА ПУЛЬСУ
+// ==========================================================================
+
+.recording-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  justify-content: center;
+  flex: 1;
+
+  .timer-circle {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    border: 6px solid #5673D3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: border-color 0.3s ease;
+
+    &.error-state {
+      border-color: #EF383C; // Стає червоним при порушенні умов камери
+    }
+
+    .time {
+      color: #000000;
+      font-family: 'Inter', sans-serif; // Залишено Inter для системних цифр
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 100%;
+      text-align: center;
+    }
+
+    .label {
+      color: #000000;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 100%;
+      text-align: center;
+    }
+  }
+
+  // Графік кардіограми
+  .pulse-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    .pulse-wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400%;
+      height: 120%;
+      background: url('/assets/measurement-wave.svg') repeat-x left center;
+      background-size: 350px 160px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      animation: slide-wave 1.5s linear infinite;
+    }
+
+    .flat-line {
+      position: absolute;
+      left: 0;
+      top: 71%; // Центрування лінії на рівні осі пульсу
+      transform: translateY(-50%);
+      width: 100%;
+      height: 6px;
+      background: #94A3B8;
+      border-radius: 2px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    // Стан, коли ШІ втратив обличчя: зупиняємо пульс і показуємо пряму лінію
+    &.error-state {
+      .pulse-wave {
+        opacity: 0;
+        animation-play-state: paused;
+      }
+      .flat-line {
+        opacity: 1;
+      }
+    }
+  }
+
+  @keyframes slide-wave {
+    from { transform: translateX(0); }
+    to { transform: translateX(-350px); } // Зсув дорівнює background-size хвилі для безшовного циклу
+  }
+
+  .recording-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+
+  .recording-desc {
+    font-size: 16px;
+    color: #64748B;
+  }
+}
+
+// ==========================================================================
+// 8. СТАН ПОМИЛКИ ЗАПИСУ
+// ==========================================================================
+
+.error-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  flex: 1;
+  animation: slideRightFadeIn 0.3s ease;
+
+  .error-icon {
+    width: 64px;
+    height: 64px;
+    background: #FEF2F2;
+    color: #EF4444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+}
+
+// ==========================================================================
+// 9. АДАПТИВНІСТЬ (Мобільні пристрої та планшети)
+// ==========================================================================
+
+@media (max-width: 992px) {
+  // Зменшуємо загальні відступи сторінки та картки
+  .measure-page {
+    padding: 100px 16px 24px;
+  }
+
+  .measure-card {
+    padding: 24px 16px;
+    gap: 32px;
+  }
+
+  .access-step {
+    gap: 10px;
+
+    .title {
+      align-items: center;
+      font-size: 35px;
+      font-weight: 500;
+      margin: 5px 0;
+    }
+
+    .subtitle {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 100%;
+      margin: 0 0 10px;
+    }
+  }
+
+  // Ставимо камеру над слайдером/текстом
+  .measurement-layout {
+    flex-direction: column; // Змінюємо напрямок на колонку
+    gap: 32px; // Додаємо відстань між камерою та текстом
+  }
+
+  .camera-col {
+    flex: none; // Скасовуємо пропорції
+    width: 100%; // Камера на всю ширину
+  }
+
+  .info-col {
+    flex: none;
+    width: 100%;
+    padding: 0; // Прибираємо лівий відступ 40px!
+  }
+
+  // 3. Зменшуємо кроки (Stepper), щоб вони вмістилися на екрані
+  .stepper {
+    padding-top: 5%;
+    .step {
+      width: 70px;
+      .step-circle {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+      .step-label {
+        font-size: 14px;
+      }   }
+
+    .step-line {
+      margin: 22px -15px 0 -15px; // Центруємо лінію під менші кружки
+    }
+  }
+
+  // 4. Оптимізуємо розміри елементів під час запису
+  .recording-section {
+    .timer-circle {
+      width: 110px;
+      height: 110px;
+
+      .time { font-size: 32px; }
+      .label { font-size: 16px; }
+    }
+
+    .pulse-container {
+      height: 200px; // Відновлюємо оригінальну висоту
+      transform: scale(0.65); // Пропорційно зменшуємо ВЕСЬ блок (хвилю, лінію і анімацію) разом!
+      margin: -35px 0; // Підтягуємо сусідні елементи, щоб не було порожнього місця
+    }
+  }
+}

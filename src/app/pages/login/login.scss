@@ -1,0 +1,204 @@
+// ==========================================================================
+// 1. ГОЛОВНИЙ КОНТЕЙНЕР СТОРІНКИ АВТОРИЗАЦІЇ (Viewport Layout & Stacking Context)
+// ==========================================================================
+
+.auth-page {
+  position: relative;
+  min-height: 100vh; // Займає мінімум 100% висоти екрану (Full Viewport Height)
+
+  // Flexbox-центрування: ідеальне вирівнювання картки по обох осях
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #EAEDF6; // Глобальний токен фону
+  padding: 24px;
+  overflow: hidden; // Запобігає появі скролу від декоративних елементів, що виходять за межі екрану
+
+  // Декоративний оверлей (Decorative Background Layer)
+  &__bg {
+    position: absolute;
+    top: -40%;
+    left: -30%;
+    width: 150%;
+    height: 150%;
+    background: url('/assets/login-wave.svg') no-repeat center center;
+    background-size: cover;
+
+    // Блокування подій: дозволяє користувачу клікати "крізь" хвилю на форму (Click-through barrier)
+    pointer-events: none;
+    z-index: 0; // Найнижчий рівень у стеку шарів
+  }
+}
+
+// ==========================================================================
+// 2. ЛОГОТИП (Absolute Positioning & Micro-interactions)
+// ==========================================================================
+
+.auth-logo {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 2; // Найвищий рівень: логотип завжди поверх фону та картки
+
+  transition: opacity 0.2s; // Плавна мікроанімація для візуального фідбеку (UX)
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  img {
+    height: 36px;
+    width: auto; // Збереження пропорцій (Aspect Ratio)
+  }
+}
+
+// ==========================================================================
+// 3. КАРТКА АВТОРИЗАЦІЇ (Component Container & BEM Architecture)
+// ==========================================================================
+
+.auth-card {
+  position: relative;
+  z-index: 1; // Середній рівень: над фоном, під логотипом
+  background: #FFFFFF;
+  width: 100%;
+
+  // Візуальна ієрархія: глибока тінь для відриву картки від фону
+  box-shadow: 0px 12px 40px rgba(116, 139, 254, 0.1);
+  padding: 41px 61px;
+  max-width: 550px;
+
+  // Легкий ефект Glassmorphism (розмиття фону під карткою, якщо вона напівпрозора)
+  backdrop-filter: blur(64px);
+  border-radius: 16px;
+  border: 1px solid #C9CFE2;
+
+  // BEM-елемент: Заголовок (Typography Token)
+  &__title {
+    font-weight: 700;
+    color: #5673D3;
+    text-align: center;
+    margin: 0 0 16px 0;
+    font-size: 48px;
+    line-height: 110%;
+  }
+
+  // BEM-елемент: Підзаголовок з інтегрованим посиланням
+  &__subtitle {
+    color: #8B91A4;
+    text-align: center;
+    margin: 0 0 40px 0;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 100%;
+
+    .link {
+      color: #5673D3;
+      font-weight: 600;
+      transition: opacity 0.2s;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// 4. СІТКА ФОРМИ ТА ЛОКАЛЬНІ ЕЛЕМЕНТИ (Form Grid Layout)
+// ==========================================================================
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // Сучасний CSS Gap для рівномірних відступів між інпутами без використання margin
+}
+
+// Блок опцій: розподіл простору (Space-between Alignment)
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -8px; // Оптичне коригування відступу від попереднього інпута
+  margin-bottom: 8px;
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+
+      // Нативна стилізація (Native UI Customization): перефарбовує стандартний чекбокс браузера
+      accent-color: #5673D3;
+    }
+
+    label {
+      color: #4E5467;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  .forgot-link {
+    color: #5673D3;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 0.2s, text-decoration 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Клас-модифікатор для примусового розтягування глобального компонента кнопки
+.btn-submit {
+  width: 100%;
+  margin-top: 16px; // Додатковий простір (Whitespace) перед головною дією (Call to Action)
+}
+
+// Токен транзакційного стану (Alert Text)
+.text-danger-bold {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+// ==========================================================================
+// 5. АДАПТИВНІСТЬ (Responsive Reflow & Mobile Optimization)
+// ==========================================================================
+@media (max-width: 860px) {
+  .auth-card {
+    margin-top: 50px;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 32px 24px; // Зменшення безпечних зон (Safe Areas) для мобільних екранів
+
+    &__title {
+      font-size: 36px; // Масштабування типографіки (Fluid Typography)
+    }
+  }
+
+  .auth-logo {
+    top: 24px;
+    left: 24px;
+  }
+
+  // Адаптивний рефлоу: перехід від горизонтального розподілу до вертикального стеку
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

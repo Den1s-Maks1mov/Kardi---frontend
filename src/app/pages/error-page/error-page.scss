@@ -1,0 +1,60 @@
+// ==========================================================================
+// 1. ГОЛОВНИЙ КОНТЕЙНЕР СТОРІНКИ ПОМИЛКИ
+// ==========================================================================
+
+.error-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  // Висота екрану мінус висота плаваючого хедера (приблизно 80px)
+  min-height: calc(100vh - 80px);
+
+  // Фон специфічний для 404 сторінки (світліший за глобальний фон сайту)
+  background-color: #F8FAFC;
+}
+
+// ==========================================================================
+// 2. БЛОК КОНТЕНТУ (Текст, кнопка та фонова ілюстрація)
+// ==========================================================================
+
+.error-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 1;
+
+  // Фонова ілюстрація помилки
+  .error-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); // Точне центрування
+    width: 480px;                     // Ширина SVG-картинки
+    height: auto;
+    z-index: -1;                      // Відправляємо на задній план (ПІД текст)
+    pointer-events: none;             // Щоб картинка не перешкоджала клікам по кнопці "На головну"
+  }
+
+  // Заголовок
+  .error-title {
+    font-size: 40px;
+    font-weight: 800;
+    color: #5673D3;                   // Фірмовий колір Kardi
+    margin: 0 0 40px 0;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 500px) {
+  .error-content {
+    .error-bg {
+      width: 300px;
+      height: auto;
+    }
+  }
+}
