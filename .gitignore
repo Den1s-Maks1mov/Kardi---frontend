@@ -66,8 +66,6 @@ tasks.md
 # FRONTEND RULES (Angular / Node.js)
 # ==============================================================================
 # Залежності та кеш Angular
-node_modules/
-.angular/
 .sass-cache/
 
 # Результати збірки (Compiled output)
